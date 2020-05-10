@@ -51,6 +51,63 @@ static void SIGINT_exit(int) {
 //=================================================================================================
 // Main:
 
+void negate_last_solution(Solver& S, vec<Lit>& new_clause)
+{
+    new_clause.clear();
+
+    for (int i = 1; i < S.nVars(); i++) // For some reason, skip the 0th?
+    {
+        new_clause.push(S.model[i] == l_True ? ~mkLit(i) : mkLit(i)); // Negate
+    }
+
+    S.addClause_(new_clause);
+}
+
+// - Michael
+void enumerate_solutions(Solver& S)
+{
+    vec<Lit> dummy;
+    vec<Lit> new_clause;
+    uint64_t num_solutions = 0;
+
+    lbool ret = S.solveLimited(dummy);
+
+    if (S.verbosity > 0)
+    {
+        S.printStats();
+        printf("\n");
+    }
+
+    // For debugging
+//    if (ret == l_True)
+//    {
+//        for (int i = 0; i < S.nVars(); i++)
+//        {
+//            if (S.model[i] != l_Undef)
+//            {
+//                printf("%s%s%d", (i == 0) ? "" : " ", (S.model[i] == l_True) ? "" : "-", i + 1);
+//            }
+//        }
+//        printf(" 0\n");
+//    }
+
+    while (ret == l_True)
+    {
+        ++num_solutions;
+        negate_last_solution(S, new_clause);
+        dummy.clear();
+        ret = S.solveLimited(dummy);
+    }
+
+    if (ret == l_False)
+    {
+        printf("Hit UNSAT formulate\n");
+    }
+    else
+    {
+        printf("INDETERMINATE\n");
+    }
+}
 
 int main(int argc, char** argv)
 {
@@ -119,6 +176,8 @@ int main(int argc, char** argv)
             printf("UNSATISFIABLE\n");
             exit(20);
         }
+
+        enumerate_solutions(S);
         
         vec<Lit> dummy;
         lbool ret = S.solveLimited(dummy);

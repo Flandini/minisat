@@ -55,7 +55,7 @@ void negate_last_solution(Solver& S, vec<Lit>& new_clause)
 {
     new_clause.clear();
 
-    for (int i = 1; i < S.nVars(); i++) // For some reason, skip the 0th?
+    for (int i = 1; i < S.maxindep; i++) // For some reason, skip the 0th?. S.nVars()
     {
         new_clause.push(S.model[i] == l_True ? ~mkLit(i) : mkLit(i)); // Negate
     }
@@ -66,11 +66,10 @@ void negate_last_solution(Solver& S, vec<Lit>& new_clause)
 // - Michael
 void enumerate_solutions(Solver& S)
 {
-    vec<Lit> dummy;
     vec<Lit> new_clause;
     uint64_t num_solutions = 0;
 
-    lbool ret = S.solveLimited(dummy);
+    bool result = S.solve();
 
     if (S.verbosity > 0)
     {
@@ -79,7 +78,7 @@ void enumerate_solutions(Solver& S)
     }
 
     // For debugging
-//    if (ret == l_True)
+//    if (result)
 //    {
 //        for (int i = 0; i < S.nVars(); i++)
 //        {
@@ -91,22 +90,19 @@ void enumerate_solutions(Solver& S)
 //        printf(" 0\n");
 //    }
 
-    while (ret == l_True)
+    while (result)
     {
         ++num_solutions;
         negate_last_solution(S, new_clause);
-        dummy.clear();
-        ret = S.solveLimited(dummy);
+        result = S.solve();
     }
 
-    if (ret == l_False)
-    {
-        printf("Hit UNSAT formulate\n");
-    }
-    else
-    {
-        printf("INDETERMINATE\n");
-    }
+    printf("Number of satisfying assignments found: %llu\n", num_solutions);
+
+    S.printStats();
+    printf("\n");
+
+    printf("Hit UNSAT formulate\n");
 }
 
 int main(int argc, char** argv)
@@ -178,32 +174,35 @@ int main(int argc, char** argv)
         }
 
         enumerate_solutions(S);
-        
+/*
         vec<Lit> dummy;
-        lbool ret = S.solveLimited(dummy);
-        if (S.verbosity > 0){
-            S.printStats();
-            printf("\n"); }
-        printf(ret == l_True ? "SATISFIABLE\n" : ret == l_False ? "UNSATISFIABLE\n" : "INDETERMINATE\n");
-        if (res != NULL){
-            if (ret == l_True){
-                fprintf(res, "SAT\n");
-                for (int i = 0; i < S.nVars(); i++)
-                    if (S.model[i] != l_Undef)
-                        fprintf(res, "%s%s%d", (i==0)?"":" ", (S.model[i]==l_True)?"":"-", i+1);
-                fprintf(res, " 0\n");
-            }else if (ret == l_False)
-                fprintf(res, "UNSAT\n");
-            else
-                fprintf(res, "INDET\n");
-            fclose(res);
-        }
-        
+
+       lbool ret = S.solveLimited(dummy);
+       if (S.verbosity > 0){
+           S.printStats();
+           printf("\n"); }
+       printf(ret == l_True ? "SATISFIABLE\n" : ret == l_False ? "UNSATISFIABLE\n" : "INDETERMINATE\n");
+       if (res != NULL){
+           if (ret == l_True){
+               fprintf(res, "SAT\n");
+               for (int i = 0; i < S.nVars(); i++)
+                   if (S.model[i] != l_Undef)
+                       fprintf(res, "%s%s%d", (i==0)?"":" ", (S.model[i]==l_True)?"":"-", i+1);
+               fprintf(res, " 0\n");
+           }else if (ret == l_False)
+               fprintf(res, "UNSAT\n");
+           else
+               fprintf(res, "INDET\n");
+           fclose(res);
+       }
+
 #ifdef NDEBUG
-        exit(ret == l_True ? 10 : ret == l_False ? 20 : 0);     // (faster than "return", which will invoke the destructor for 'Solver')
+       exit(ret == l_True ? 10 : ret == l_False ? 20 : 0);     // (faster than "return", which will invoke the destructor for 'Solver')
 #else
-        return (ret == l_True ? 10 : ret == l_False ? 20 : 0);
+       return (ret == l_True ? 10 : ret == l_False ? 20 : 0);
 #endif
+ */
+    return 0;
     } catch (OutOfMemoryException&){
         printf("===============================================================================\n");
         printf("INDETERMINATE\n");

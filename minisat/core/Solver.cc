@@ -69,6 +69,7 @@ Solver::Solver() :
   , min_learnts_lim  (opt_min_learnts_lim)
   , restart_first    (opt_restart_first)
   , restart_inc      (opt_restart_inc)
+  , maxindep (0)
 
     // Parameters (the rest):
     //
@@ -852,12 +853,14 @@ lbool Solver::solve_()
     learntsize_adjust_cnt     = (int)learntsize_adjust_confl;
     lbool   status            = l_Undef;
 
+    /*
     if (verbosity >= 1){
         printf("============================[ Search Statistics ]==============================\n");
         printf("| Conflicts |          ORIGINAL         |          LEARNT          | Progress |\n");
         printf("|           |    Vars  Clauses Literals |    Limit  Clauses Lit/Cl |          |\n");
-        printf("===============================================================================\n");
+
     }
+     */
 
     // Search:
     int curr_restarts = 0;
@@ -868,9 +871,10 @@ lbool Solver::solve_()
         curr_restarts++;
     }
 
+    /*
     if (verbosity >= 1)
         printf("===============================================================================\n");
-
+    */
 
     if (status == l_True){
         // Extend & copy model:

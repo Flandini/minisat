@@ -71,25 +71,6 @@ void enumerate_solutions(Solver& S)
 
     bool result = S.solve();
 
-    if (S.verbosity > 0)
-    {
-        S.printStats();
-        printf("\n");
-    }
-
-    // For debugging
-//    if (result)
-//    {
-//        for (int i = 0; i < S.nVars(); i++)
-//        {
-//            if (S.model[i] != l_Undef)
-//            {
-//                printf("%s%s%d", (i == 0) ? "" : " ", (S.model[i] == l_True) ? "" : "-", i + 1);
-//            }
-//        }
-//        printf(" 0\n");
-//    }
-
     while (result)
     {
         ++num_solutions;
@@ -102,7 +83,7 @@ void enumerate_solutions(Solver& S)
     S.printStats();
     printf("\n");
 
-    printf("Hit UNSAT formulate\n");
+    printf("Hit UNSAT formula\n");
 }
 
 int main(int argc, char** argv)

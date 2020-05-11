@@ -83,7 +83,6 @@ static void parse_DIMACS_main(B& in, Solver& S, bool strictp = false) {
             if (eagerMatch(in, "c maxindep"))
             {
                 S.maxindep = parseInt(in);
-                printf("Max indep is: %d", S.maxindep);
             }
             else
             {

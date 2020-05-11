@@ -69,7 +69,8 @@ Solver::Solver() :
   , min_learnts_lim  (opt_min_learnts_lim)
   , restart_first    (opt_restart_first)
   , restart_inc      (opt_restart_inc)
-  , maxindep (0)
+  , maxindep         (0)
+  , num_solutions    (0)
 
     // Parameters (the rest):
     //
@@ -1001,6 +1002,8 @@ void Solver::printStats() const
     printf("decisions             : %-12" PRIu64 "   (%4.2f %% random) (%.0f /sec)\n", decisions, (float)rnd_decisions*100 / (float)decisions, decisions   /cpu_time);
     printf("propagations          : %-12" PRIu64 "   (%.0f /sec)\n", propagations, propagations/cpu_time);
     printf("conflict literals     : %-12" PRIu64 "   (%4.2f %% deleted)\n", tot_literals, (max_literals - tot_literals)*100 / (double)max_literals);
+    printf("satisfying assignments: %-12" PRIu64 "\n" , num_solutions);
+    printf("max indep             : %-12" PRIu64 "\n", maxindep);
     if (mem_used != 0) printf("Memory used           : %.2f MB\n", mem_used);
     printf("CPU time              : %g s\n", cpu_time);
 }

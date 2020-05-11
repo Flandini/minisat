@@ -67,18 +67,15 @@ void negate_last_solution(Solver& S, vec<Lit>& new_clause)
 void enumerate_solutions(Solver& S)
 {
     vec<Lit> new_clause;
-    uint64_t num_solutions = 0;
 
     bool result = S.solve();
 
     while (result)
     {
-        ++num_solutions;
+        ++S.num_solutions;
         negate_last_solution(S, new_clause);
         result = S.solve();
     }
-
-    printf("Number of satisfying assignments found: %llu\n", num_solutions);
 
     S.printStats();
     printf("\n");

@@ -36,7 +36,8 @@ namespace Minisat {
 
 class Solver {
 public:
-    unsigned int maxindep;
+    unsigned long long maxindep;
+    unsigned long long num_solutions;
 
     // Constructor/Destructor:
     //
